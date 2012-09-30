@@ -40,7 +40,7 @@ bool NoFlyPolicy::canFly(const Person& person)
 	for (type_test test : pimpl->tests)
 	{
 		if (test(person) == SUSPECT)
-			return true;
+			return false;
 	}
 
 	if (person.getNationality() == Person::FRENCH && person.getPoliticalView() == Person::LIBERAL)
