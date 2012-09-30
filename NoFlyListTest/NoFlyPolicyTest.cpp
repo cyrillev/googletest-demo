@@ -111,3 +111,23 @@ TEST_F(NoFlyPolicyTest, terroristsGoToGitmo)
 	Destination gitmo("Guantanamo", 0);
 	ASSERT_EQ(gitmo, d);
 }
+
+TEST_F(NoFlyPolicyTest, hackersCanFly)
+{
+	const Person frenchLiberalHacker(Person::FRENCH, Person::LIBERAL);
+	const Person frenchLiberal(Person::FRENCH, Person::LIBERAL);
+
+	auto pFrenchLiberalHacker = &frenchLiberalHacker;
+
+	auto hackersCanFly = [pFrenchLiberalHacker] (const Person& person) {
+		if (&person == pFrenchLiberalHacker)
+				return NoFlyPolicy::CLEAR;
+			else
+				return NoFlyPolicy::UNCERTAIN;
+	};
+
+	policy.addTest(hackersCanFly);
+
+	ASSERT_TRUE(policy.canFly(frenchLiberalHacker));
+	ASSERT_FALSE(policy.canFly(frenchLiberal));
+}
