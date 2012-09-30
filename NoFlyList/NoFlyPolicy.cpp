@@ -1,15 +1,48 @@
 #include "NoFlyPolicy.h"
 
 #include <string>
-#include <vector>
 
 using std::string;
 using std::vector;
+using std::shared_ptr;
+
+class NoFlyPolicy::impl
+{
+public:
+	vector< NoFlyPolicy::type_test > tests;
+};
+
+NoFlyPolicy::NoFlyPolicy()
+  : pimpl{ new impl{} }
+{
+	// default black list
+	auto noTerrorist = [] (const Person& person) {
+			if (person.isTerrorist())
+				return NoFlyPolicy::SUSPECT;
+			else
+				return NoFlyPolicy::UNCERTAIN;
+	};
+
+	addTest( noTerrorist );
+}
+
+
+NoFlyPolicy::~NoFlyPolicy() = default;
+
+
+void NoFlyPolicy::addTest(type_test test)
+{
+	pimpl->tests.push_back(test);
+}
 
 bool NoFlyPolicy::canFly(const Person& person)
 {
-	if (person.isTerrorist())
-		return false;
+	for (type_test test : pimpl->tests)
+	{
+		if (test(person) == SUSPECT)
+			return true;
+	}
+
 	if (person.getNationality() == Person::FRENCH && person.getPoliticalView() == Person::LIBERAL)
 		return false;
 
