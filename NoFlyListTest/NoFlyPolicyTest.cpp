@@ -7,12 +7,30 @@
 #include <string>
 
 using std::make_shared;
+using std::vector;
 using std::string;
 
 class NoFlyPolicyTest : public ::testing::Test
 {
 public:
-	NoFlyPolicyTest() : person(Person::AMERICAN, Person::CONSERVATIVE) {};
+	NoFlyPolicyTest() : person(Person::AMERICAN, Person::CONSERVATIVE)
+	{
+		auto checkTweets = [] (const Person& person) {
+			vector<string> forbidden;
+			forbidden.push_back("bomb");
+			forbidden.push_back("osama");
+			forbidden.push_back("obama");
+
+			auto twitter = person.getTweets();
+			for(auto tweet = twitter.begin(); tweet != twitter.end(); ++tweet)
+				for(auto f = forbidden.begin(); f != forbidden.end(); ++f)
+					if (tweet->find(*f) != string::npos)
+						return NoFlyPolicy::SUSPECT;
+			return NoFlyPolicy::UNCERTAIN;
+		};
+
+		policy.addTest(checkTweets);
+	};
 protected:
 	NoFlyPolicy policy;
 	Person person;

@@ -23,7 +23,15 @@ NoFlyPolicy::NoFlyPolicy()
 				return NoFlyPolicy::UNCERTAIN;
 	};
 
+	auto noFrenchLiberal = [] (const Person& person) {
+		if (person.getNationality() == Person::FRENCH && person.getPoliticalView() == Person::LIBERAL)
+				return NoFlyPolicy::SUSPECT;
+			else
+				return NoFlyPolicy::UNCERTAIN;
+	};
+
 	addTest( noTerrorist );
+	addTest( noFrenchLiberal );
 }
 
 
@@ -39,23 +47,15 @@ bool NoFlyPolicy::canFly(const Person& person)
 {
 	for (type_test test : pimpl->tests)
 	{
-		if (test(person) == SUSPECT)
-			return false;
+		switch (test(person))
+		{
+		case CLEAR: return true;
+		case SUSPECT: return false;
+		case UNCERTAIN: /* do nothing */;
+		}
 	}
 
-	if (person.getNationality() == Person::FRENCH && person.getPoliticalView() == Person::LIBERAL)
-		return false;
 
-	vector<string> forbidden;
-	forbidden.push_back("bomb");
-	forbidden.push_back("osama");
-	forbidden.push_back("obama");
-
-	auto twitter = person.getTweets();
-	for(auto tweet = twitter.begin(); tweet != twitter.end(); ++tweet)
-		for(auto f = forbidden.begin(); f != forbidden.end(); ++f)
-			if (tweet->find(*f) != string::npos)
-				return false;
 
 	return true;
 }
