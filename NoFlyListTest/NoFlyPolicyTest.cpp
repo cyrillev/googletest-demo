@@ -1,7 +1,7 @@
-#include "..\NoFlyList\NoFlyPolicy.h"
-#include "..\NoFlyList\Person.h"
+#include "../NoFlyList/NoFlyPolicy.h"
+#include "../NoFlyList/Person.h"
 
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 
 #include <memory>
 #include <string>
