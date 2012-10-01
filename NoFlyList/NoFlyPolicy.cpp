@@ -45,17 +45,16 @@ void NoFlyPolicy::addTest(type_test test)
 
 bool NoFlyPolicy::canFly(const Person& person)
 {
+	bool canFly = true;
 	for (type_test test : pimpl->tests)
 	{
 		switch (test(person))
 		{
 		case CLEAR: return true;
-		case SUSPECT: return false;
+		case SUSPECT: canFly = false;
 		case UNCERTAIN: /* do nothing */;
 		}
 	}
 
-
-
-	return true;
+	return canFly;
 }
